@@ -1,0 +1,181 @@
+{
+    "swagger": "2.0",
+    "info": {
+      "title": "CAR RENTAL",
+      "description": "This API Specification for CAR",
+      "contact": { "email": "mireilleirafasha@gmail.com" },
+      "license": { "name": "MIT", "url": "http://www.opensource.org/licenses/mit" },
+      "version": "1.0.0"
+    },
+    "basePath": "/Car",
+    "schemes": ["https", "http"],
+    "paths": {
+      "/user/Test": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Test",
+          "description": "Test",
+          "responses": {
+            "200": { "description": "OK" }
+          }
+        }
+      },
+      "/user/signup": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Create a new user",
+          "description": "Create a new user",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": { "$ref": "#/definitions/User" }
+            }
+          ],
+          "responses": {
+            "201": { "description": "User created" },
+            "400": {
+              "description": "Bad request - Validation error",
+              "schema": { "$ref": "#/definitions/Error" }
+            }
+          }
+        }
+      },
+      "/user/signin": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Sign in a user",
+          "description": "Sign in a user",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": { "$ref": "#/definitions/User" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "User logged in successfully" },
+            "400": {
+              "description": "Bad request - Validation error",
+              "schema": { "$ref": "#/definitions/Error" }
+            }
+          }
+        }
+      },
+      "/user/listAll": {
+        "get": {
+          "tags": ["Users"],
+          "summary": "Get all users",
+          "description": "Returns all the users",
+          "responses": {
+            "200": {
+              "description": "All the users",
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/User" }
+              }
+            }
+          }
+        }
+      },
+      "/user/verify": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Verify a user",
+          "description": "Verify a user",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": { "$ref": "#/definitions/User" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "OTP was verified" },
+            "400": {
+              "description": "Bad request - Validation error",
+              "schema": { "$ref": "#/definitions/Error" }
+            }
+          }
+        }
+      },
+      "/user/forgotpassword": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Forgot password",
+          "description": "Forgot password",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": { "$ref": "#/definitions/User" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Forgot password was successful" },
+            "400": {
+              "description": "Bad request - Validation error",
+              "schema": { "$ref": "#/definitions/Error" }
+            }
+          }
+        }
+      },
+      "/user/resetpassword": {
+        "post": {
+          "tags": ["Users"],
+          "summary": "Reset password",
+          "description": "Reset password",
+          "parameters": [
+            {
+              "name": "body",
+              "in": "body",
+              "required": true,
+              "schema": { "$ref": "#/definitions/User" }
+            }
+          ],
+          "responses": {
+            "200": { "description": "Password was reset successfully" },
+            "400": {
+              "description": "Bad request - Validation error",
+              "schema": { "$ref": "#/definitions/Error" }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "FirstName": { "type": "string", "description": "FirstName of the User" },
+          "LastName": { "type": "string", "description": "LastName of the User" },
+          "Email": { "type": "string", "description": "Email of the User" },
+          "Address": { "type": "string", "description":"Physical Address of user"},
+          "PhoneNumber":{ "type": "string", "description":"PhoneNumber of user"},
+          "Password": { "type": "string", "description": "Password of the User" },
+          "confirmPassword": { "type": "string", "description": "Confirm password of the User" }
+        },
+        "required": ["firstname", "lastname","continent","country","city","idcard","telephone","password", "email", "role", "confirmPassword"]
+      },
+      "Contact": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "description": "Name of the contact" },
+          "email": { "type": "string", "description": "Email of the contact" },
+          "message": { "type": "string", "description": "Message sent" }
+        },
+        "required": ["name", "email", "message"]
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" }
+        }
+      }
+    }
+  }
+  
