@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import router from './route/index.js';
 import errorHandler from './middleware/errorHandler.js';
 import dotenv from 'dotenv';
-//import documentation from "./doc/swagger.json" assert{type:"json"};
-//import swaggerUi from "swagger-ui-express"
+import documentation from "./doc/swagger.json" assert{type:"json"};
+import swaggerUi from "swagger-ui-express"
 dotenv.config();
 import cors from "cors"
 
@@ -24,8 +24,8 @@ const options = {
 const app = express();
 app.use(cors());
 app.use(express.json());
-//app.use("/api_docs",swaggerUi.serve, swaggerUi.setup(documentation))
-app.use('/Weeding',router);
+app.use("/api_docs",swaggerUi.serve, swaggerUi.setup(documentation))
+app.use('/Car',router);
 mongoose.connect(`${process.env.db}`,options)
 .then(()=>
 {

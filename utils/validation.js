@@ -16,13 +16,11 @@ export const otpValidation=[
 ];
 
 export const signUpValidation=[
-    body("FirstName","FirstName is required").not().isEmpty(),
-    body("LastName","LastName is required").not().isEmpty(),
+    body("Name","Name is required").not().isEmpty(),
     body("Email","Email is required").not().isEmpty(),
     body("Email","Invalid email").isEmail(),
     body("Password","password is required").not().isEmpty(),
     body("Password","Password  should contain atleast 8 characters,uppercase and lower case letters,numbers and symbols").isStrongPassword(),
-    body("confirmPassword","confirmpassword is required ").not().isEmpty(),
     body("Address","Address is required").not().isEmpty(),
     body("PhoneNumber","PhoneNumber is required").not().isEmpty(),
   //  body("confirmpassword","confirmPassword  should contain atleast 8 characters,uppercase and lower case letters,numbers and symbols").isStrongPassword(),

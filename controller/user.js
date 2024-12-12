@@ -22,13 +22,8 @@ export const SignUp=asyncWrapper(async(req,res,next)=>
         console.log(errors.array());
          next(new BadRequestError(errors.array()[0].msg))
     }
-    //checking if password match
-    if(req.body.Password !== req.body.confirmPassword)
-        {
-            return next(new BadRequestError("Passwords do not match"));
-        }
     // checking  if user is already in using the email
-    const FounderUser=await UserModel.findOne({email:req.body.email})
+    const FounderUser=await UserModel.findOne({Email:req.body.Email})
     if(FounderUser)
     {
         return next(new BadRequestError("Email is already in using this email"))
@@ -41,8 +36,7 @@ export const SignUp=asyncWrapper(async(req,res,next)=>
     const otpExpirationDate= new Date().getTime()+(60*1000*5);
     //Recording the user to the database
     const newUser= new UserModel({
-        FirstName:req.body.FirstName,
-        LastName:req.body.LastName,
+        Name:req.body.Name,
         Email:req.body.Email,
         Password:hashedPassword,
         Role:req.body.Role,
@@ -123,7 +117,7 @@ export const SignIn=asyncWrapper(async(req,res,next)=>
     const token = jwt.sign({id:FoundUser.id,Email:FoundUser.Email},process.env.JWT_SECRET_KEY, {expiresIn:'1h'});
 
     res.status(200).json({
-        message:"User account verified!",
+        message:"User login successful!",
         user:FoundUser,
         token:token
     });

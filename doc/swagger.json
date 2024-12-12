@@ -151,15 +151,15 @@
       "User": {
         "type": "object",
         "properties": {
-          "FirstName": { "type": "string", "description": "FirstName of the User" },
-          "LastName": { "type": "string", "description": "LastName of the User" },
+          "Name": { "type": "string", "description": "Name of the User" },
           "Email": { "type": "string", "description": "Email of the User" },
           "Address": { "type": "string", "description":"Physical Address of user"},
           "PhoneNumber":{ "type": "string", "description":"PhoneNumber of user"},
           "Password": { "type": "string", "description": "Password of the User" },
-          "confirmPassword": { "type": "string", "description": "Confirm password of the User" }
+          "Role":{"type": "string", "description":"role of useer","default":"customer"}
+
         },
-        "required": ["firstname", "lastname","continent","country","city","idcard","telephone","password", "email", "role", "confirmPassword"]
+        "required": ["Name","Address","Password", "Email", "Role", "PhoneNumber"]
       },
       "Contact": {
         "type": "object",
