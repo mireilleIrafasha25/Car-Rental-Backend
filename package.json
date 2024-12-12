@@ -4,6 +4,9 @@
   "description": "",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": "20.16.0"
+  },
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon"
