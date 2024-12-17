@@ -145,7 +145,58 @@
             }
           }
         }
+      },
+      "/carAvailable/add": {
+      "post": {
+        "tags": [
+          "CarAvailable"
+        ],
+        "summary": "Add a new car",
+        "description": "add a new car with  the provided details",
+        "parameters": [
+          {
+            "name": "Description",
+            "in": "formData",
+            "required": true,
+            "type":"string"
+            
+          },
+  
+          {
+            "name": "Price",
+            "in": "formData",
+            "required": true,
+            "type":"number"
+           
+          },
+          {
+            "name": "image",
+            "in": "formData",
+            "required": true,
+            "type":"file"
+           
+          },
+          {
+            "name": "availability",
+            "in": "formData",
+            "required": true,
+            "type":"string",
+            "default": "available"
+          }
+        ],
+       
+        "responses": {
+          "200": {
+            "description": "Car added successfully"
+           
+          },
+          "401": {
+            "description": "Bad request -Validation error"
+            
+          }
+        }
       }
+    }
     },
     "definitions": {
       "User": {
