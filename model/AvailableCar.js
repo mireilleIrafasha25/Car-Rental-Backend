@@ -15,6 +15,10 @@ const carSchema = new schema({
         required: true,
         default:"available"
     },
+    name:{
+        type: String,
+        required: true
+    },
     image: {
         url: {
             type: String

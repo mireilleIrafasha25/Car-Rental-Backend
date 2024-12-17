@@ -161,6 +161,12 @@
             "type":"string"
             
           },
+          {
+            "name": "name",
+            "in": "formData",
+            "required": true,
+            "type":"string"
+          },
   
           {
             "name": "Price",

@@ -28,6 +28,7 @@ export const addAvailablecar = asyncWrapper(async (req, res, next) => {
            Description:req.body.Description,
            Price:req.body.Price,
            Available:req.body.Available,
+           name:req.body.name,
             image: {
                 url: result.url
             },
