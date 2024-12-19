@@ -26,3 +26,20 @@ export const authorize = (role) => {
 };
 
 //export { authenticate, authorize };
+
+export const authMiddleware = (req, res, next) => {
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = { userId: decoded.id, Role:decoded.Role} // Assuming the JWT contains the user's ID
+        next();
+        console.log(req.user)
+    } catch (error) {
+        return res.status(401).json({ message: 'Invalid token' });
+    }
+};
+

@@ -13,49 +13,70 @@ export const test = (req, res, next) => {
     res.status(200).json({message:'Hello Driver!'});
 }
 
-export const SignUp=asyncWrapper(async(req,res,next)=>
-{
-// validation
-    const errors= validationResult(req);
-    if(!errors.isEmpty())
-    {
-        console.log(errors.array());
-         next(new BadRequestError(errors.array()[0].msg))
+export const SignUp = asyncWrapper(async (req, res, next) => {
+    // Validate request inputs
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors.array());
+      return next(new BadRequestError(errors.array()[0].msg));
     }
-    // checking  if user is already in using the email
-    const FounderUser=await UserModel.findOne({Email:req.body.Email})
-    if(FounderUser)
-    {
-        return next(new BadRequestError("Email is already in using this email"))
-    };
-
-    //harshing the user Password
-    const hashedPassword = await bcryptjs.hashSync(req.body.Password,10);
-    //Generating otp generator
-    const otp=otpGenerator();
-    const otpExpirationDate= new Date().getTime()+(60*1000*5);
-    //Recording the user to the database
-    const newUser= new UserModel({
-        Name:req.body.Name,
-        Email:req.body.Email,
-        Password:hashedPassword,
-        Role:req.body.Role,
-        Address:req.body.Address,
-        PhoneNumber:req.body.PhoneNumber,
-        otp: otp,
-        otpExpires:otpExpirationDate
+  
+    // Check if the user already exists using the email
+    const FoundUser = await UserModel.findOne({ Email: req.body.Email });
+    if (FoundUser) {
+      return next(new BadRequestError("Email is already in use"));
+    }
+  
+    // Hashing the user password
+    const hashedPassword = await bcryptjs.hash(req.body.Password, 10);
+  
+    // Generate OTP
+    const otp = otpGenerator();
+    const otpExpirationDate = new Date().getTime() + 60 * 1000 * 5;
+  
+    // Save new user in the database
+    const newUser = new UserModel({
+      Name: req.body.Name,
+      Email: req.body.Email,
+      Password: hashedPassword,
+      Role: req.body.Role || "customer",
+      Address: req.body.Address,
+      PhoneNumber: req.body.PhoneNumber,
+      otp: otp,
+      otpExpires: otpExpirationDate,
     });
-    const savedUser= await newUser.save();
-    // console.log(savedUser);
- await sendEmail(req.body.Email,"Verify your account",`Your OTP is ${otp}`)
- if(savedUser)
- {
-    return res.status(201).json({
-        message:"User account created!",
-        user:savedUser
-    })
- }
-});
+  
+    const savedUser = await newUser.save();
+  
+    // Send verification email with OTP
+    await sendEmail(
+      req.body.Email,
+      "Verify your account",
+      `Your OTP is ${otp}`
+    );
+  
+    // Generate JWT token for the user
+    const token = jwt.sign(
+      { userId: savedUser._id, Email: savedUser.Email ,Role: savedUser.Role},
+      process.env.JWT_SECRET_KEY,
+      { expiresIn: "1h" }
+    );
+  
+    // Return response with JWT token
+    if (savedUser) {
+      return res.status(201).json({
+        message: "User account created successfully! Please verify your email.",
+        user: {
+          id: savedUser.id,
+          Name: savedUser.Name,
+          Email: savedUser.Email,
+          Role: savedUser.Role,
+        },
+        token: token, // JWT for authentication
+      });
+    }
+  });
+  
 export const Validateopt=asyncWrapper(async(req,res,next)=>
 {
     //validation 
@@ -114,7 +135,7 @@ export const SignIn=asyncWrapper(async(req,res,next)=>
         return next(new BadRequestError('Invalid Password'))
     }
     //Generate token
-    const token = jwt.sign({id:FoundUser.id,Email:FoundUser.Email},process.env.JWT_SECRET_KEY, {expiresIn:'1h'});
+    const token = jwt.sign({userId:FoundUser._id,Email:FoundUser.Email,Role:FoundUser.Role},process.env.JWT_SECRET_KEY, {expiresIn:'1h'});
 
     res.status(200).json({
         message:"User login successful!",

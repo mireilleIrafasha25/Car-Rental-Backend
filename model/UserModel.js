@@ -54,7 +54,7 @@ const userSchema = new schema({
         verified:{
             type:Boolean,
             required:true,
-            default:false
+            default:true
         }
 
 })

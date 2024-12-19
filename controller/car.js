@@ -3,15 +3,19 @@ import { NotFoundError, BadRequestError } from "../error/index.js";
 import { validationResult } from "express-validator";
 import asyncWrapper from "../middleware/async.js";
 import cloudinary from "../utils/cloudinary.js";
-
 export const test = (req, res, next) => {
-    res.send('Hello Brides!');
+    res.send('Hello Car Owner!');
 }
 
 export const addAvailablecar = asyncWrapper(async (req, res, next) => {
     try {
         const result = await cloudinary.uploader.upload(req.file.path);
 
+          const {userId}=req.user || {};
+          if(!userId)
+          {
+            return res.status(401).send({ error: 'Unauthorized' });
+          }
         // Check if Cloudinary upload was successful
         if (!result || !result.url) {
             throw new Error('Failed to upload image to Cloudinary');
@@ -23,91 +27,83 @@ export const addAvailablecar = asyncWrapper(async (req, res, next) => {
             throw new BadRequestError(errors.array()[0].msg);
         }
 
-        // Create new service
-        const newService = await carModel.create({
+        // Create new car
+        const newCar = await carModel.create({
            Description:req.body.Description,
            Price:req.body.Price,
            Available:req.body.Available,
            name:req.body.name,
+           type:req.body.type,
             image: {
                 url: result.url
             },
+            userId
         });
 
-        res.status(201).json(newService);
+        res.status(201).json(newCar);
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         return res.status(500).json({ message: "Internal Server Error" });
     }
 });
+export const getCarsByUser = asyncWrapper(async (req, res, next) => {
+    
+    const userCars = await carModel.find({userId:req.user.userId});
 
-    export const getAllServices =  async (req, res, next) => {
-        try{
-            const getServices = await serviceModel.find();
-            if(getServices){
-                return res.status(200).json({
-                    size: getServices.length,
-                    getServices
-                })
-            }
-            
-        }catch (error){
-            next(error);  
-        }
+    if (!userCars || userCars.length === 0) 
+        {
+        return res.status(404).json({ message: "No cars found for this user" });
     }
+    res.status(200).json({
+        cars: userCars,
+        message: 'Cars posted by the user retrieved successfully',
+    });
+});
 
-    export const getServiceById = async (req, res, next) => {
-        try{
-            const foundedService = await serviceModel.findById(req.params.id)
-            if (!foundedService) {
-                return next(new NotFoundError(`Service not found`))
-            }
-            
-              return  res.status(200).json(foundedService)
-            }
-        catch (error) {
-            next(error);
-            
-          }
+export const GetAllCar=asyncWrapper(async(req,res,next)=>
+{
+    const Allcar=await carModel.find()
+    res.status(200).json({
+        Car:Allcar,
+        message:'All Car are returned successfully'
     }
+    )
+})
 
-    export const findServiceCategory = async (req, res, next) => {
-        const serviceCategory = req.params.category;
-        
-        try {
-            const foundService = await serviceModel.find({category: serviceCategory});
-            return res.status(200).json({
-                size: foundService.length,
-                foundService
-            });
-        } catch (error) {
-            next(error);
-        }
-    }
-      export const updateService = async(req, res, next) => {
-        try {
-            const updatedService = await serviceModel.findByIdAndUpdate(req.params.id, req.body,{new:true});
-               if(!updatedService) {
-                return next(new NotFoundError(`Service not found`));
-               }
-               return  res.status(200).json(updatedService)
-            }
-        catch (error) {
-            next(error);
-        }
+export const getCarByName=asyncWrapper(async(req,res,next)=>
+{
+const {name,type,price}=req.query
+const foundCar=await carModel.find({name:name,type:type,price:price})
 
-    }
-  
-    export const deleteService = async(req, res, next) => {
-        const id =req.params.id;
-           
-        try {
-            const deletedService = await serviceModel.findByIdAndDelete(id);
-              return  res.status(200).json({ message : 'Service is deleted'})
-            }
-            
-         catch (error) {
-            next(error)
-        }
+res.status(200).json({
+    Car:foundCar,
+    message:'Car is returned successfully'
+})
+})
 
+// export const getCarById=asyncWrapper(async(req,res,next)=>
+// {
+//     const {id}=req.params
+//     const foundCar=await carModel.findById(id)
+//     if(!foundCar)
+//     {
+//         return next(new NotFoundError('Car not found'))
+//     }
+//     res.status(200).json({
+//         car:foundCar
+//     })
+
+// }
+// )
+export const UpdateCarbyId=asyncWrapper(async(req,res,next)=>
+{
+    const {id}=req.params
+    const updatedCar=await carModel.findByIdAndUpdate(id,req.body,{new:true})
+    if(!updatedCar)
+    {
+        return next(new NotFoundError('Car not found'))
     }
+    res.status(200).json({
+        car:updatedCar
+    })
+})

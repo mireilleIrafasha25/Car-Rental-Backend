@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import UserModel from "../model/UserModel.js";
 const schema=mongoose.Schema
 
 const carSchema = new schema({
@@ -17,6 +18,15 @@ const carSchema = new schema({
     },
     name:{
         type: String,
+        required: true
+    },
+    type:{
+        type: String,
+        required: true
+    },
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"User",
         required: true
     },
     image: {
